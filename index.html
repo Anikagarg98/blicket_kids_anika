@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experiment</title>
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-animation@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-call-function@1.1.2"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-canvas-keyboard-response@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-canvas-button-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.0"></script>
+    <script src="https://unpkg.com/@jspsych/core@latest"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-likert@2.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-video-keyboard-response@1.1.3"></script>
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
+    
+    
+    <script type="text/javascript" src="lib/vendors/jquery-2.2.0.min.js"></script>
+	<script type="text/javascript" src="jspsych-7-pavlovia-2021.12.js"></script>
+
+</head>
+<body></body>
+<script>
+    /* initialize jsPsych */
+    var jsPsych = initJsPsych({
+    });
+    
+    /* create timeline */
+    var timeline = [];
+
+    //initialize pavlovia connection 
+
+    var pavloviaInit = {
+        type:jsPsychPavlovia,
+        command: "init"
+    };
+
+    timeline.push(pavloviaInit);
+
+    //define conditions and counterbalancing
+    //var conditions = [ 'sub_dots' ]; //'general_pies','count_dots', 'large_dots',
+    //var versions = ['1', '2', '3', '4', '5'];
+    //var responses = ['Match_left', 'Match_right'];
+
+    //let myCondition = conditions[Math.floor(Math.random() * conditions.length)]; //jsPsych.data.getURLVariable('condition');
+    //let myVersion = versions[Math.floor(Math.random() * versions.length)]; //jsPsych.data.getURLVariable('version'),
+    //let myResponse = responses[ Math.floor(Math.random() * responses.length)]; //jsPsych.data.getURLVariable('response'),
+
+    var videoPaths = [];
+    // to save basics in entire file
+
+    // capture info from Prolific & about Qualtrics
+    //var qualtrics_id = jsPsych.data.getURLVariable('QualtricsID');
+    //var prolific_id = jsPsych.data.getURLVariable('ProlificID');
+
+    // adding this information for every trial in datafile
+    //jsPsych.data.addProperties({
+      //qualtrics
+   //qualtrics_id: qualtrics_id,
+      //prolific
+    //prolific_id: prolific_id,
+      //assignment details
+    //blicket_condition: myCondition,
+    //blicket_response: myResponse });
+
+    //*******************************
+    // PRELOAD STIMULI
+    //*******************************
+
+    //blicket videos 
+    videoPaths.push('blicket_videos/1_sub_dots_right.mp4');
+
+    //ORMTS videos
+    for (var i = 1; i<=8; i++ ){
+        videoPaths.push(`ORMTS_videos/${i}_RMTS.mp4`)
+    };
+
+    /* preload images */
+    var preload = {
+        type: jsPsychPreload,
+        video: videoPaths,
+    };
+
+    timeline.push(preload);
+
+
+    //*******************************
+    // Instructional video for parents 
+    //*******************************
+
+
+
+    //*******************************
+    // Blicket - 1 Trial
+    //*******************************
+
+    var blicket_trial = {
+        type: jsPsychVideoKeyboardResponse,
+        stimulus: ['blicket_videos/1_sub_dots_right.mp4'],
+        choices: ['ArrowRight', 'ArrowLeft'],
+        width: 1060,
+        height: 940,
+        response_allowed_while_playing: false,
+    };
+    
+    timeline.push(blicket_trial);
+
+    /**************END Blicket*****************/ 
+
+
+    //*******************************
+    // RMTS - 2 Trials
+    //*******************************
+
+    var rmts_instructions = {
+        type: jsPsychInstructions,
+        pages: [
+            `Instructions for the Parent:
+            <br>1. In this game, your child will be shown three images in total: One on top and two on the bottom. Your child will be asked to match one of the 
+            bottom two pictures with the top one.
+            <br>2. What you have to do? As you did in the game before, when your child points to one of the two images at the bottom, your job is to press the arrow key
+            corresponding to the location of that image.
+            <br>3. For example, if your child chooses the picture on the bottom right, you will have to press the right arrow key. If they choose the bottom left picture,
+            you will press the left arrow key.
+            <br>4. Please try to refrain from responding for your child. The response you would pick might look different from your child picks, but that is okay. We 
+            just want to see how your child thinks. 
+            `
+        ],
+        button_label_next: "Start the game!"
+    };
+
+    var rmts_trial_1 = {
+        type: jsPsychVideoKeyboardResponse,
+        stimulus: ['ORMTS_videos/1_RMTS.mp4'],
+        choices: ['ArrowRight', 'ArrowLeft'],
+        width: 1060,
+        height: 940,
+        response_allowed_while_playing: false,
+    };
+
+    var rmts_trial_2 = {
+        type: jsPsychVideoKeyboardResponse,
+        stimulus: ['ORMTS_videos/2_RMTS.mp4'],
+        choices: ['ArrowRight', 'ArrowLeft'],
+        width: 1060,
+        height: 940,
+        response_allowed_while_playing: false,
+    };
+
+    timeline.push(rmts_instructions);
+    timeline.push(rmts_trial_1);
+    timeline.push(rmts_trial_2);
+
+
+    var save_data = {
+    type: jsPsychCallFunction,
+    func: function() {
+        jsPsych.data.get().localSave('csv', 'data.csv');
+        }
+    };
+
+    timeline.push(save_data);
+
+    //*******************************
+    // Highest Count - 1 Trial
+    //*******************************
+
+    //var counting_instructions = {
+    //    type: jsPsychInstructions,
+    //    pages: ['Instructions for parents.<br>1. If your child counts up to 120, they need not continue after that.<br>2. Please do not count along with your child. Let them do the task on their own.<br>3. You can, however, help begin counting, if your child is feeling shy. You can say something like, Can you count with me..1..2..3 (so that the child says it along with you). Once they start counting, you should stop and let your child continue on their own.<br> 4. You can do the prompting twice, if they seem to stop in between. If your child does not continue even after prompting, you should press the END TRIAL button.<br> 5. You can go to the next page whenever your child is ready. You can come back to the instructions page anytime during the counting process.',
+    //    
+
+    //var counting_trial = {
+    //   type: jsPsychSurveyText,
+    //   questions: 
+    //        {prompt = "Please note down in the text box below your child's highest count."
+    //      }
+        
+
+    //timeline.push(counting_instructions);
+    //timeline.push(counting_trial);
+
+   //need to add counting time limit 
+   //attention check-ins 
+
+
+    //***************************************//
+
+    //finish connection with pavlovia.org
+    var pavlovia_finish = {
+        type: jsPsychPavlovia,
+        command: "finish"
+        };
+
+    timeline.push(pavlovia_finish);
+    
+    //end screen
+    var endScreen = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `<p>You've finished the experiment!<br>
+            ONE MORE STEP TO PROCEED TO PROLIFIC!
+            <p><a href="XXXX">Click here to return to Prolific and complete the study</a>.</p>
+            <br><br><br>In this study, we showed you a box that only lit up when certain ratios of blue:orange were placed on top and asked you to choose between two options, one that matched the same ratio and one that matched only on
+            non-ratio features. We randomly assigned you to one of four conditions that varied in two ways: the format of the blue:orange images (sets of dots or whole pie charts) and the size of the quantities (small vs. large). We also had you do other tasks designed to measure whether people
+            pay attention to relations or specific features of the images. For example, when matching the cards with shapes/colors you could have selected the cards that both depicted "same" or the cards that had a matching shape (e.g., purple triangles). We also do this study with children from 2 to 8 years old. Overall, we are particularly interested
+            in comparing how people's choices change over childhood and into adulthood and whether there is a relationship between people's choices with the ratios of blue:orange and other kinds of tasks. 
+            <br><br>If you have questions about the study, please email the research team at quadlab@psych.rutgers.edu</p><br><br>`,
+        choices: ' ' //space
+        };
+
+    timeline.push(endScreen)
+
+    /* start the experiment */
+    jsPsych.run(timeline);
+</script>
+</html>
